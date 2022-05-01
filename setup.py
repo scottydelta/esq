@@ -39,6 +39,6 @@ setup(
     test_suite='tests',
     tests_require=test_requirements,
     url='https://github.com/scottydelta/esq',
-    version='0.1.0',
+    version='0.1.3',
     zip_safe=False,
 )
