@@ -3,6 +3,7 @@ python:
 - 3.8
 install: pip install -U tox-travis
 script: tox
+skip_cleanup: true
 deploy:
   provider: pypi
   distributions: sdist bdist_wheel
