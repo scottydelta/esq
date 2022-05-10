@@ -21,9 +21,3 @@ A python package that provides graph API for elasticsearch and makes it easier t
 
 * Free software: GNU General Public License v3
 * Documentation: https://esq.readthedocs.io.
-
-
-Features
---------
-
-* TODO
