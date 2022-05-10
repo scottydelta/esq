@@ -5,8 +5,6 @@ __email__ = 'contact@vikashbajaj.com'
 __version__ = '0.1.13'
 
 import pkg_resources
-import elasticsearch
-import json
 from esq import fetch_es_data
 
 
