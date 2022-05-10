@@ -1,14 +1,17 @@
 def filter_query_generator(filters):
     processed_filters = filters
-    query_obj = {"bool": {"must": [], "filter": [], "should": [], "must_not": []}}
+    query_obj = {"bool": {"must": [], "filter": [],
+                          "should": [], "must_not": []}}
     bool_type = "filter"
     if (len(filters) == 1) and (filters[0]["filter_data_field"] == "label_value") and (len(filters[0]["filter_value"].split(",")) > 1):
         bool_type = "should"
-        filter_field= filters[0]["filter_field"]
-        processed_filters = [{'filter_data_field': 'label_value', 'filter_field': filter_field, 'filter_value': item } for item in filters[0]["filter_value"].split(",")]
+        filter_field = filters[0]["filter_field"]
+        processed_filters = [{'filter_data_field': 'label_value', 'filter_field': filter_field,
+                              'filter_value': item} for item in filters[0]["filter_value"].split(",")]
     for elem in processed_filters:
         if elem.get("filter_data_field") == "label_value":
-            filter_query = {"match_phrase": {"%s" % (elem["filter_field"],): "%s" % (elem["filter_value"],)}}
+            filter_query = {"match_phrase": {
+                "%s" % (elem["filter_field"],): "%s" % (elem["filter_value"],)}}
         elif elem.get("filter_data_field") == "timeseries":
             filter_query = {
                 "range": {
@@ -62,7 +65,8 @@ def coordinates_query_generator(filters, coordinates_field, size):
                 "must": [],
                 "filter": [
                     {"match_all": {}},
-                    {"bool": {"should": [{"exists": {"field": "coordinates.type"}}], "minimum_should_match": 1}},
+                    {"bool": {"should": [
+                        {"exists": {"field": "coordinates.type"}}], "minimum_should_match": 1}},
                 ],
             }
         },
@@ -99,4 +103,3 @@ def docs_query_generator(requested_data_fields, filters, size):
     }
     docs_query["query"] = filter_query_generator(filters)
     return docs_query
-
