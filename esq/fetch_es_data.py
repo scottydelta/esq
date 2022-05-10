@@ -1,102 +1,75 @@
-def filter_query_generator(filters):
-    processed_filters = filters
-    query_obj = {"bool": {"must": [], "filter": [], "should": [], "must_not": []}}
-    bool_type = "filter"
-    if (len(filters) == 1) and (filters[0]["filter_data_field"] == "label_value") and (len(filters[0]["filter_value"].split(",")) > 1):
-        bool_type = "should"
-        filter_field= filters[0]["filter_field"]
-        processed_filters = [{'filter_data_field': 'label_value', 'filter_field': filter_field, 'filter_value': item } for item in filters[0]["filter_value"].split(",")]
-    for elem in processed_filters:
-        if elem.get("filter_data_field") == "label_value":
-            filter_query = {"match_phrase": {"%s" % (elem["filter_field"],): "%s" % (elem["filter_value"],)}}
-        elif elem.get("filter_data_field") == "timeseries":
-            filter_query = {
-                "range": {
-                    "%s"
-                    % (elem["filter_field"],): {
-                        "gte": "%s" % (elem["filter_value"].split(",")[0],),
-                        "lte": "%s" % (elem["filter_value"].split(",")[1],),
-                    }
-                }
-            }
-        elif elem.get("filter_data_field") == "coordinates":
-            filter_query = {
-                "geo_bounding_box": {
-                    "%s.coordinates"
-                    % (elem["filter_field"],): {
-                        "top_left": [
-                            float(format(float(coord.strip()), ".6f")) for coord in elem["filter_value"].split(",")[:2]
-                        ],
-                        "bottom_right": [
-                            float(format(float(coord.strip()), ".6f")) for coord in elem["filter_value"].split(",")[2:]
-                        ],
-                    }
-                }
-            }
+from esq import generate_es_query
+
+
+def get_count(elasticsearch_client, index_name, filters, use_body):
+    try:
+        _count = elasticsearch_client.count(index=index_name)
+        return dict(count=_count.get("count", 0))
+    except ValueError as e:
+        return []
+
+
+def get_docs(elasticsearch_client, index_name, data_fields, filters, size, use_body):
+    try:
+        fields = data_fields.split(",")
+        query = generate_es_query.docs_query_generator(fields, filters, size)
+        if use_body:
+            resp = elasticsearch_client.search(index=index_name, body=query)
         else:
-            filter_query = None
-        if filter_query is not None:
-            query_obj["bool"][bool_type].append(filter_query)
-    return query_obj
+            resp = elasticsearch_client.search(index=index_name, query=query)
+        if "id" in fields:
+            return_data = [{**obj["_source"], "id": obj["_id"]}
+                           for obj in resp["hits"]["hits"]]
+        else:
+            return_data = [obj["_source"] for obj in resp["hits"]["hits"]]
+        return return_data
+    except (KeyError, AttributeError, ValueError) as e:
+        return []
 
 
-def label_value_query_generator(filters, keyword_field, size):
-
-    keyword_query = {
-        "aggs": {"result": {"terms": {"field": "%s" % (keyword_field,), "order": {"_count": "desc"}, "size": size}}},
-        "size": 0,
-    }
-    keyword_query["query"] = filter_query_generator(filters)
-    return keyword_query
-
-
-def coordinates_query_generator(filters, coordinates_field, size):
-
-    coordinates_query = {
-        "docvalue_fields": ["%s.coordinates" % (coordinates_field,), "username"],
-        "size": size,
-        "stored_fields": ["%s.coordinates" % (coordinates_field,)],
-        "script_fields": {},
-        "query": {
-            "bool": {
-                "must": [],
-                "filter": [
-                    {"match_all": {}},
-                    {"bool": {"should": [{"exists": {"field": "coordinates.type"}}], "minimum_should_match": 1}},
-                ],
-            }
-        },
-    }
-    return coordinates_query
-
-
-def timeseries_query_generator(filters, timeseries_field):
-
-    timeseries_query = {
-        "aggs": {
-            "result": {
-                "date_histogram": {
-                    "field": "%s" % (timeseries_field,),
-                    "fixed_interval": "1h",
-                    "time_zone": "Asia/Calcutta",
-                    "min_doc_count": 1,
-                }
-            }
-        },
-        "size": 0,
-        "stored_fields": ["*"],
-        "docvalue_fields": [{"field": "%s" % (timeseries_field,), "format": "date_time"}],
-    }
-    timeseries_query["query"] = filter_query_generator(filters)
-    return timeseries_query
-
-
-def docs_query_generator(requested_data_fields, filters, size):
-    docs_query = {
-        "_source": requested_data_fields,
-        "size": size,
-        "sort": {"created_utc": "desc"},
-    }
-    docs_query["query"] = filter_query_generator(filters)
-    return docs_query
-
+def get_aggregation(elasticsearch_client, index_name, data_field, data_type, filters, size, use_body):
+    try:
+        if data_type == "label_value":
+            query = generate_es_query.label_value_query_generator(
+                filters, data_field, size)
+            if use_body:
+                resp = elasticsearch_client.search(
+                    index=index_name, body=query)
+            else:
+                resp = elasticsearch_client.search(
+                    index=index_name, query=query)
+            return_data = resp["aggregations"]["result"]["buckets"]
+            return [dict(label=data["key"], value=data["doc_count"]) for data in return_data]
+        elif data_type == "coordinates":
+            query = generate_es_query.coordinates_query_generator(
+                filters, data_field, size)
+            if use_body:
+                resp = elasticsearch_client.search(
+                    index=index_name, body=query)
+            else:
+                resp = elasticsearch_client.search(
+                    index=index_name, query=query)
+            return_data = resp["hits"]["hits"]
+            return [
+                dict(
+                    label=data["fields"]["username"][0],
+                    value=[
+                        float(format(float(coord.strip()), ".6f"))
+                        for coord in data["fields"]["coordinates.coordinates"][0].split(",")
+                    ][::-1],
+                )
+                for data in return_data
+            ]
+        elif data_type == "timeseries":
+            query = generate_es_query.timeseries_query_generator(
+                filters, data_field)
+            if use_body:
+                resp = elasticsearch_client.search(
+                    index=index_name, body=query)
+            else:
+                resp = elasticsearch_client.search(
+                    index=index_name, query=query)
+            return_data = resp["aggregations"]["result"]["buckets"]
+            return [dict(label=data["key"], value=data["doc_count"]) for data in return_data]
+    except (KeyError, AttributeError, ValueError) as e:
+        return []
