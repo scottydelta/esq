@@ -2,7 +2,7 @@
 
 __author__ = """Vikash Bajaj"""
 __email__ = 'esq@vikashbajaj.com'
-__version__ = '0.1.5'
+__version__ = '0.1.0'
 
 
 import json
