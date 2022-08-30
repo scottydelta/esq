@@ -1,0 +1,20 @@
+language: python
+python:
+- 3.8
+install: pip install -U tox-travis
+script: tox
+skip_cleanup: true
+deploy:
+  skip_cleanup: true
+  provider: pypi
+  distributions: sdist bdist_wheel
+  user: __token__
+  password:
+    secure: ORA0U00kghZ3uu+IDuwNh8VhyH2+GGWeGbVqmF8tP2l2CE4tY401PFYeZHezhDq0KbtLqs5Q5U7jEHUNVyNugHmIJnBjMXHU7AozOQ+7vH/rhOvKVoDZcsyxUO0M4a8QnGtMJ2bEBGAREuvN2UYYfuBnKQ1dvOMxNJZK84O/BzTb4qwrankuOaGBWcgnmrGpWuqz9GFR01cu55Iu+5Z9KPNMqFDW/knMZWHCmNSMwYVmP+zDrznboA56CCZuxv/6uSiO/LKAJErkMj/OIPLN9EJ+rhC3LzYTb79f2hpPWAv9lueDrOnJIxvzJu1PsauOSzl/p30CbwOPM+ii9YfjYfma66irT4bEUHkW7qJodWGFf9RJB3kXY3JdWSws2RjSwH5rA14VYrGi9qS5fV6pv+1zJPOiK/me+TyEj6gXu78aG5I/rQiy8gqbPL6ZyPsB85kIZezXc963CVvvR7ZfofSlzpIcBADScyp0wzhYalnMWkgLtXsHDlvqGmCxGY1p7dZNZU0OZJQ9iZwUmCIosq2ElyVz2TPwEtJvTvSOY2ciB6yRx0px6AQf2Fwmh64+CNDlUBLNk1KEA4q6r1sIM7+wIYb8gZipGgDuYvXUxdhjmW75fOnv126FOHqJqBP+EC9uAuRoxKuFAVyZP3HVOFp6fnivzsjghQ9i8EAvEMs=
+  on:
+    repo: scottydelta/esq
+    python: 3.8
+# safelist
+branches:
+  only:
+  - master
