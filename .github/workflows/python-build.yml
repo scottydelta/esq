@@ -9,18 +9,8 @@ permissions:
     contents: read
 
 jobs:
-    docs:
-        runs-on: ubuntu-latest
-        steps:
-        - uses: actions/checkout@v1
-        - uses: ammaraskar/sphinx-action@master
-          with:
-              pre-build-command: python -m pip install -r requirements_dev.txt
-              docs-folder: "docs/"
-              
     build:
         runs-on: ubuntu-latest
-
 
         steps:
             - uses: actions/checkout@v3
