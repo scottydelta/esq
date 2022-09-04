@@ -16,9 +16,9 @@ A python package that provides GraphQL API for Elasticsearch and makes it easier
 >>> from esq import Esq
 >>> from elasticsearch import Elasticsearch
 
-
 # init your Elasticsearch client object here
->>> es_client = Elasticsearch()
+>>> ELASTICSEARCH_URI = "http://localhost:9200"
+>>> es_client = Elasticsearch([ELASTICSEARCH_URI])
 
 # init your Esq object here
 >>> esq = Esq(es_client)
@@ -29,9 +29,11 @@ A python package that provides GraphQL API for Elasticsearch and makes it easier
 ## Usage
 
 ```python
-#to get agreegation on sentiment field on your twitter index, you can simply do:
->>> print(esq.get_aggr_data(index='twitter',
+# to get aggregation on sentiment field on your twitter index, you can simply do:
+>>> sentiments = esq.get_aggr_data(index='twitter',
                         data_type='keyword/text', #data_type is an enum('keyword/text', 'coordinates', 'timeseries')
-                        data_field='sentiment'))
+                        data_field='sentiment')
+
+>>> print(sentiments)
 [{'label': 'positive', 'value': 9}, {'label': 'neutral', 'value': 7}, {'label': 'negative', 'value': 1}]
 ```
