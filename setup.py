@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-
 """The setup script."""
 
 from setuptools import setup, find_packages
@@ -10,9 +9,9 @@ with open('README.md') as readme_file:
 with open('HISTORY.md') as history_file:
     history = history_file.read()
 
-requirements = [ ]
+requirements = []
 
-test_requirements = [ ]
+test_requirements = []
 
 setup(
     author="Vikash Bajaj",
@@ -28,7 +27,8 @@ setup(
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
     ],
-    description="A python package that provides graph API for elasticsearch and makes it easier to query data from elasticsearch without writing any queries.",
+    description=
+    "A python package that provides GraphQL API for Elasticsearch and makes it easier to query data without writing complex queries.",
     install_requires=requirements,
     license="GNU General Public License v3",
     long_description=readme + '\n\n' + history,

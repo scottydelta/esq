@@ -2,9 +2,9 @@
 
 [![Build Status](https://img.shields.io/pypi/v/esq.svg)](https://pypi.python.org/pypi/esq) [![[pypi]](https://github.com/scottydelta/esq/actions/workflows/python-publish.yml/badge.svg)](https://github.com/scottydelta/esq/actions/workflows/python-publish.yml) [![Documentation Status](https://readthedocs.org/projects/esq/badge/?version=latest)](https://esq.readthedocs.io/en/latest/?version=latest)
 
-[Install](#install) - [Init](#init) - [Usage](#usage)
+[Install](#install) - [Init](#init) - [Usage](#usage) - [Documentation](#documentation)
 
-A python package that provides GraphQL API for Elasticsearch and makes it easier to query data from without writing complex queries.
+A python package that provides GraphQL API for Elasticsearch and makes it easier to query data without writing complex queries.
 
 ## Install
 
@@ -37,3 +37,7 @@ A python package that provides GraphQL API for Elasticsearch and makes it easier
 >>> print(sentiments)
 [{'label': 'positive', 'value': 9}, {'label': 'neutral', 'value': 7}, {'label': 'negative', 'value': 1}]
 ```
+
+## Documentation
+
+[Read the full documentation here](https://esq.readthedocs.io/en/latest/?version=latest)
