@@ -7,6 +7,7 @@ Welcome to esq's documentation!
 
    readme
    installation
+   usage
    contributing
    authors
    history
