@@ -7,7 +7,7 @@ Welcome to esq's documentation!
 
    readme
    installation
-   usage
+   full-usage
    contributing
    authors
    history
