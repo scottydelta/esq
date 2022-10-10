@@ -40,4 +40,4 @@ A python package that provides GraphQL API for Elasticsearch and makes it easier
 
 ## Documentation
 
-[Read the full documentation here](https://esq.readthedocs.io/en/latest/?version=latest)
+[Read the full usage documentation here](https://esq.readthedocs.io/en/latest/full-usage.html?version=latest)
