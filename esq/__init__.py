@@ -2,7 +2,7 @@
 
 __author__ = """Vikash Bajaj"""
 __email__ = 'esq@vikashbajaj.com'
-__version__ = '1.0.2'
+__version__ = '1.0.3'
 
 from .fetch_es_data import (fetch_aggr_data)
 """Main module."""
